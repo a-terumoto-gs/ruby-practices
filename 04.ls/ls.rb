@@ -1,13 +1,11 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'debug'
-
 def fetched_files
   Dir.glob('*')
 end
 
-def files_sort_display
+def files_sort
   files = fetched_files
   elements_count = files.count
   columns_count = (elements_count % 3).zero? ? elements_count / 3 : elements_count / 3 + 1
@@ -25,12 +23,18 @@ def files_sort_display
     col3 = files.last(columns_count)
   end
 
-  col2.push(' ') if elements_count % 3 == 1 
+  col2.push(' ') if elements_count % 3 == 1
   col3.push(' ') if elements_count % 3 == 1 || elements_count % 3 == 2
 
+  files_display(col1, col2, col3)
+end
+
+def files_display(col1, col2, col3)
+  max_length = [col1, col2, col3].map { |col| col.max_by(&:length).length }.max
+
   [col1, col2, col3].transpose.each do |index|
-    puts index.map { |e| "#{e} " }.join(' ')
+    puts index.map { |e| e.ljust(max_length) }.join(' ')
   end
 end
 
-files_sort_display
+files_sort
