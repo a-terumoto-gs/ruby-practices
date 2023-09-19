@@ -1,13 +1,14 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-def files_acquisition
+def fetched_file
   Dir.glob('*')
 end
 
-def files_sort
-  number = files_acquisition.count
-  row = (number % 3).zero? ? number / 3 : number / 3 + 1
+def files_sort_display
+  files = fetched_file
+  elements_count = files.count
+  columns_count = (elements_count % 3).zero? ? elements_count / 3 : elements_count / 3 + 1
 
   files = files_acquisition
   col1 = files[0, row]
@@ -30,4 +31,4 @@ def files_sort
   end
 end
 
-files_sort
+files_sort_display
