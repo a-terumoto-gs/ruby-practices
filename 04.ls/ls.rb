@@ -6,7 +6,7 @@ def sort_display
   files_display(col1, col2, col3)
 end
 
-def files_sort
+def files_fetch_sort
   files = Dir.glob('*')
   elements_count = files.count
   columns_count = (elements_count % 3).zero? ? elements_count / 3 : elements_count / 3 + 1
