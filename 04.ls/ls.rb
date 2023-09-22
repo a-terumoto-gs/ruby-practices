@@ -1,12 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-def sort_display
-  col1, col2, col3 = files_sort
-  files_display(col1, col2, col3)
-end
-
-def files_fetch_sort
+def fetch_sort_files
   files = Dir.glob('*')
   elements_count = files.count
   columns_count = (elements_count % 3).zero? ? elements_count / 3 : elements_count / 3 + 1
@@ -30,12 +25,12 @@ def files_fetch_sort
   [col1, col2, col3]
 end
 
-def files_display(col1, col2, col3)
-  max_length = [col1, col2, col3].map { |col| col.max_by(&:length).length }.max
+def display_files(files)
+  max_length = files.flatten.map(&:length).max
 
-  [col1, col2, col3].transpose.each do |index|
+  files.transpose.each do |index|
     puts index.map { |e| e.ljust(max_length) }.join(' ')
   end
 end
 
-sort_display
+display_files(fetch_sort_files)
