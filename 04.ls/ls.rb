@@ -1,8 +1,25 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-def fetch_sort_files
-  files = Dir.glob('*')
+require 'optparse'
+
+def fetch_files
+  include_hidden_files = false
+
+  OptionParser.new do |opts|
+    opts.on('-a', 'Include hidden files') do
+      include_hidden_files = true
+    end
+  end.parse!
+
+  if include_hidden_files
+    Dir.glob('*') + Dir.glob('.*')
+  else
+    Dir.glob('*')
+  end
+end
+
+def sort_files(files)
   elements_count = files.count
   columns_count = (elements_count % 3).zero? ? elements_count / 3 : elements_count / 3 + 1
 
@@ -33,4 +50,5 @@ def display_files(files)
   end
 end
 
-display_files(fetch_sort_files)
+sorted_files = sort_files(fetch_files)
+display_files(sorted_files)
