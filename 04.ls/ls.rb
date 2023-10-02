@@ -13,7 +13,7 @@ def fetch_files
   end.parse!
 
   if include_hidden_files
-    Dir.glob('*') + Dir.glob('.*')
+    Dir.glob('*', File::FNM_DOTMATCH)
   else
     Dir.glob('*')
   end
