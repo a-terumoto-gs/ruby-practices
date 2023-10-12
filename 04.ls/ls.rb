@@ -4,16 +4,16 @@
 require 'optparse'
 
 def fetch_files
-  include_hidden_files = false
+  invert_order = false
 
   OptionParser.new do |opts|
-    opts.on('-a', 'Include hidden files') do
-      include_hidden_files = true
+    opts.on('-r', 'invert_order') do
+      invert_order = true
     end
   end.parse!
 
-  if include_hidden_files
-    Dir.glob('*', File::FNM_DOTMATCH)
+  if invert_order
+    Dir.glob('*').reverse!
   else
     Dir.glob('*')
   end
