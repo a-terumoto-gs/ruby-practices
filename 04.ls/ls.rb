@@ -18,7 +18,7 @@ def determin_option
 end
 
 def fetch_files
-    Dir.glob('*')
+  Dir.glob('*')
 end
 
 def sort_files(files)
@@ -74,22 +74,22 @@ def f_type_to_s(mode)
 end
 
 def f_perms_to_s(mode)
-  perms = ''
-  # owner
-  perms = mode & 0o400 != 0 ? "#{perms}r" : "#{perms}-"
-  perms = mode & 0o200 != 0 ? "#{perms}w" : "#{perms}-"
-  perms = mode & 0o100 != 0 ? "#{perms}x" : "#{perms}-"
-  # group
-  perms = mode & 0o040 != 0 ? "#{perms}r" : "#{perms}-"
-  perms = mode & 0o020 != 0 ? "#{perms}w" : "#{perms}-"
-  perms = mode & 0o010 != 0 ? "#{perms}x" : "#{perms}-"
-  # others
-  perms = mode & 0o004 != 0 ? "#{perms}r" : "#{perms}-"
-  perms = mode & 0o002 != 0 ? "#{perms}w" : "#{perms}-"
-  perms = mode & 0o001 != 0 ? "#{perms}x" : "#{perms}-"
+  owner_perms = format_perms(mode, 6)
+  group_perms = format_perms(mode, 3)
+  other_perms = format_perms(mode, 0)
+
+  "#{owner_perms}#{group_perms}#{other_perms}"
 end
 
-def fetch_sort_files_detail(files)
+def format_perms(mode, shift)
+  perms = +''
+  perms << (mode & (0o400 >> shift) != 0 ? 'r' : '-')
+  perms << (mode & (0o200 >> shift) != 0 ? 'w' : '-')
+  perms << (mode & (0o100 >> shift) != 0 ? 'x' : '-')
+  perms
+end
+
+def fetch_display_files_detail(files)
   max_filename_length = files.max_by(&:length).length
   max_size_length = files.map { |file| File.size(file).to_s.length }.max
   max_group_length = files.map { |file| Etc.getgrgid(File.stat(file).gid).name.length }.max
@@ -115,8 +115,8 @@ end
 def display_list_files
   detail_info = determin_option
   if detail_info
-    sorted_files = fetch_sort_files_detail(fetch_files)
-  else 
+    fetch_display_files_detail(fetch_files)
+  else
     sorted_files = sort_files(fetch_files)
     display_files(sorted_files)
   end
