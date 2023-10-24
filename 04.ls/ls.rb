@@ -52,6 +52,25 @@ def display_files(files)
   end
 end
 
+def calculate_total_blocks(directory_path)
+  total_blocks = 0
+
+  Dir.foreach(directory_path) do |entry|
+    next if ['.', '..'].include?(entry)
+
+    entry_path = File.join(directory_path, entry)
+
+    if File.file?(entry_path)
+      file_stat = File.stat(entry_path)
+      total_blocks += file_stat.blocks
+    elsif File.directory?(entry_path)
+      total_blocks += calculate_total_blocks(entry_path)
+    end
+  end
+
+  total_blocks
+end
+
 def f_type_to_s(mode)
   case mode & 0o170000
   when 0o100000
@@ -115,6 +134,7 @@ end
 def display_list_files
   detail_info = determin_option
   if detail_info
+    puts "合計 #{calculate_total_blocks(Dir.pwd) / 2}"
     fetch_display_files_detail(fetch_files)
   else
     sorted_files = sort_files(fetch_files)
