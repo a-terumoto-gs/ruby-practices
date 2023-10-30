@@ -116,18 +116,18 @@ def fetch_display_files_detail(files)
   max_nlink_length = files.map { |file| File.stat(file).nlink.to_s.length }.max
 
   files.each do |file|
-    box = []
+    file_set = []
     file_stat = File.stat(file)
 
-    box.unshift(format("%-#{max_filename_length}s", file))
-    box.unshift(format('%<month>2d月 %<day>2d %<time>2s', month: File.mtime(file).month, day: File.mtime(file).day, time: File.mtime(file).strftime('%H:%M')))
-    box.unshift(format("%#{max_size_length}s", File.size(file)))
-    box.unshift(format("%-#{max_group_length}s", Etc.getgrgid(file_stat.gid).name))
-    box.unshift(format("%-#{max_owner_length}s", Etc.getpwuid(file_stat.uid).name))
-    box.unshift(format("%-#{max_nlink_length}s", file_stat.nlink))
-    box.unshift(f_type_to_s(file_stat.mode) + f_perms_to_s(file_stat.mode))
-    box_str = box.join(' ')
-    puts box_str
+    file_set.unshift(format("%-#{max_filename_length}s", file))
+    file_set.unshift(format('%<month>2d月 %<day>2d %<time>2s', month: File.mtime(file).month, day: File.mtime(file).day, time: File.mtime(file).strftime('%H:%M')))
+    file_set.unshift(format("%#{max_size_length}s", File.size(file)))
+    file_set.unshift(format("%-#{max_group_length}s", Etc.getgrgid(file_stat.gid).name))
+    file_set.unshift(format("%-#{max_owner_length}s", Etc.getpwuid(file_stat.uid).name))
+    file_set.unshift(format("%-#{max_nlink_length}s", file_stat.nlink))
+    file_set.unshift(f_type_to_s(file_stat.mode) + f_perms_to_s(file_stat.mode))
+    file_set_str = file_set.join(' ')
+    puts file_set_str
   end
 end
 
