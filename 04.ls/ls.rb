@@ -5,7 +5,7 @@ require 'optparse'
 require 'etc'
 require 'time'
 
-def determin_option
+def determine_option
   detail_info = false
 
   OptionParser.new do |opts|
