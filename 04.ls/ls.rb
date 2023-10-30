@@ -132,8 +132,7 @@ def fetch_display_files_detail(files)
 end
 
 def display_list_files
-  detail_info = determin_option
-  if detail_info
+  if determine_option
     puts "合計 #{calculate_total_blocks(Dir.pwd) / 2}"
     fetch_display_files_detail(fetch_files)
   else
