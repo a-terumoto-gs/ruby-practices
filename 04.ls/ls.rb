@@ -136,8 +136,7 @@ def display_list_files
     puts "合計 #{calculate_total_blocks(Dir.pwd) / 2}"
     fetch_display_files_detail(fetch_files)
   else
-    sorted_files = sort_files(fetch_files)
-    display_files(sorted_files)
+    display_files(sort_files(fetch_files))
   end
 end
 
