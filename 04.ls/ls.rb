@@ -131,7 +131,7 @@ def fetch_display_files_detail(files)
   end
 end
 
-def display_list_files
+def execute_ls
   if determine_option
     puts "合計 #{calculate_total_blocks(Dir.pwd) / 2}"
     fetch_display_files_detail(fetch_files)
@@ -140,4 +140,4 @@ def display_list_files
   end
 end
 
-display_list_files
+execute_ls
