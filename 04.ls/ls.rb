@@ -126,23 +126,33 @@ def format_perms(mode, shift)
   perms
 end
 
+def calculate_max_length(files)
+  max_length = { file_length: 0, size_length: 0, group_length: 0, owner_length: 0, nlink_length: 0 }
+  max_length[:filename_length] = files.max_by(&:length).length
+  max_length[:size_length] = files.map { |file| File.size(file).to_s.length }.max
+  max_length[:group_length] = files.map { |file| Etc.getgrgid(File.stat(file).gid).name.length }.max
+  max_length[:owner_length] = files.map { |file| Etc.getpwuid(File.stat(file).uid).name.length }.max
+  max_length[:nlink_length] = files.map { |file| File.stat(file).nlink.to_s.length }.max
+
+  max_length
+end
+
 def fetch_display_files_detail(files)
-  max_filename_length = files.max_by(&:length).length
-  max_size_length = files.map { |file| File.size(file).to_s.length }.max
-  max_group_length = files.map { |file| Etc.getgrgid(File.stat(file).gid).name.length }.max
-  max_owner_length = files.map { |file| Etc.getpwuid(File.stat(file).uid).name.length }.max
-  max_nlink_length = files.map { |file| File.stat(file).nlink.to_s.length }.max
+  max_length = calculate_max_length(files)
 
   files.each do |file|
     file_set = []
     file_stat = File.stat(file)
 
-    file_set.unshift(format("%-#{max_filename_length}s", file))
-    file_set.unshift(format('%<month>2d月 %<day>2d %<time>2s', month: File.mtime(file).month, day: File.mtime(file).day, time: File.mtime(file).strftime('%H:%M')))
-    file_set.unshift(format("%#{max_size_length}s", File.size(file)))
-    file_set.unshift(format("%-#{max_group_length}s", Etc.getgrgid(file_stat.gid).name))
-    file_set.unshift(format("%-#{max_owner_length}s", Etc.getpwuid(file_stat.uid).name))
-    file_set.unshift(format("%-#{max_nlink_length}s", file_stat.nlink))
+    file_set.unshift(format("%-#{max_length[:filename_length]}s", file))
+    file_set.unshift(format('%<month>2d月 %<day>2d %<time>2s',
+                            month: File.mtime(file).month,
+                            day: File.mtime(file).day,
+                            time: File.mtime(file).strftime('%H:%M')))
+    file_set.unshift(format("%#{max_length[:size_length]}s", File.size(file)))
+    file_set.unshift(format("%-#{max_length[:group_length]}s", Etc.getgrgid(file_stat.gid).name))
+    file_set.unshift(format("%-#{max_length[:owner_length]}s", Etc.getpwuid(file_stat.uid).name))
+    file_set.unshift(format("%-#{max_length[:nlink_length]}s", file_stat.nlink))
     file_set.unshift(f_type_to_s(file_stat.mode) + f_perms_to_s(file_stat.mode))
     file_set_str = file_set.join(' ')
     puts file_set_str
