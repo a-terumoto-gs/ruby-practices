@@ -2,11 +2,9 @@
 # frozen_string_literal: true
 
 require 'optparse'
-require 'debug'
 
 def determine_options
   options = { has_line_count: false, has_word_count: false, has_char_count: false }
-  
 
   OptionParser.new do |opts|
     opts.on('-l', 'has_line_count') do
@@ -22,16 +20,14 @@ def determine_options
     end
   end.parse!
 
-  if options.values.none?
-    options = options.transform_values! { true }
-  end
+  options = options.transform_values! { true } if options.values.none?
 
   options
 end
 
 def count_char(file_path)
   char_count = 0
-  File.open(file_path, "r") do |file|
+  File.open(file_path, 'r') do |file|
     char_count = file.read.bytesize
   end
   char_count
@@ -40,10 +36,10 @@ end
 def count_word(file_path)
   word_count = 0
 
-  File.open(file_path, "r") do |file|
+  File.open(file_path, 'r') do |file|
     in_word = false
     file.each_char do |char|
-      if char =~ /[ \t\n]/
+      if char.match?(/[ \t\n]/)
         in_word = false
       else
         word_count += 1 unless in_word
@@ -57,8 +53,8 @@ end
 def count_line(file_path)
   line_count = 0
 
-  File.open(file_path, "r") do |file|
-    file.each_line do |line|
+  File.open(file_path, 'r') do |file|
+    file.each_line do
       line_count += 1
     end
   end
@@ -77,66 +73,51 @@ def calculate_length(files)
   max_length[:word_length] = sum[:word].to_s.length
   max_length[:line_length] = sum[:line].to_s.length
 
-  return sum, max_length
+  [sum, max_length]
 end
 
 def total_display(options, sum, max_length)
-  total_set = ["合計"]
+  total_set = ['合計']
 
-  if options[:has_char_count]
-    total_set.unshift(format("%#{max_length[:char_length]}s",sum[:char].to_s))
-  end
+  total_set.unshift(format("%#{max_length[:char_length]}s", sum[:char].to_s)) if options[:has_char_count]
 
-  if options[:has_word_count]
-    total_set.unshift(format("%#{max_length[:word_length]}s",sum[:word].to_s))
-  end
+  total_set.unshift(format("%#{max_length[:word_length]}s", sum[:word].to_s)) if options[:has_word_count]
 
-  if options[:has_line_count]
-    total_set.unshift(format("%#{max_length[:line_length]}s",sum[:line].to_s))
-  end
-  total_set_str = total_set.join(' ')
-  puts total_set_str
+  total_set.unshift(format("%#{max_length[:line_length]}s", sum[:line].to_s)) if options[:has_line_count]
+
+  puts total_set.join(' ')
 end
 
-def input_argument(files,options)
+def input_argument(files, options)
   sum, max_length = calculate_length(files)
 
   files.each do |file|
     file_set = []
     file_set.unshift(file)
-    if options[:has_char_count]
-      file_set.unshift(format("%#{max_length[:char_length]}s",count_char(file)))
-    end
 
-    if options[:has_word_count]
-      file_set.unshift(format("%#{max_length[:word_length]}s",count_word(file)))
-    end
+    file_set.unshift(format("%#{max_length[:char_length]}s", count_char(file))) if options[:has_char_count]
 
-    if options[:has_line_count]
-      file_set.unshift(format("%#{max_length[:line_length]}s",count_line(file)))
-    end
-    file_set_str = file_set.join(' ')
-    puts file_set_str
+    file_set.unshift(format("%#{max_length[:word_length]}s", count_word(file))) if options[:has_word_count]
+
+    file_set.unshift(format("%#{max_length[:line_length]}s", count_line(file))) if options[:has_line_count]
+
+    puts file_set.join(' ')
   end
 
-  if files.size >= 2
-    total_display(options, sum, max_length)
-  end
+  total_display(options, sum, max_length) if files.size >= 2
 end
 
-def input_pipe(file,options)
-  file_set = [] 
-  if options[:has_char_count]
-    char_count = file.bytesize
-    file_set.unshift(char_count)
-  end
+def input_pipe(file, options)
+  file_set = []
+
+  file_set.unshift(file.bytesize) if options[:has_char_count]
 
   if options[:has_word_count]
     in_word = false
     word_count = 0
 
     file.each_char do |char|
-      if char =~ /[ \t\n]/
+      if char.match?(/[ \t\n]/)
         in_word = false
       else
         word_count += 1 unless in_word
@@ -146,24 +127,17 @@ def input_pipe(file,options)
     file_set.unshift(word_count)
   end
 
-  if options[:has_line_count]
-    line_count = 0
-    file.each_line do |line|
-      line_count += 1
-    end
-    file_set.unshift(line_count)
-  end
+  file_set.unshift(file.each_line.count) if options[:has_line_count]
 
-  file_set_str = file_set.join(' ')
-  puts file_set_str
+  puts file_set.join(' ')
 end
 
 def excuse_wc
   options = determine_options
   if ARGV.empty?
-    input_pipe($stdin.read,options)
+    input_pipe($stdin.read, options)
   else
-    input_argument(ARGV,options)
+    input_argument(ARGV, options)
   end
 end
 
