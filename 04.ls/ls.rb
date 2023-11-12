@@ -6,19 +6,37 @@ require 'etc'
 require 'time'
 
 def determine_option
-  detail_info = false
+  options = { detail_info: false, include_hidden_files: false, invert_order: false }
 
   OptionParser.new do |opts|
     opts.on('-l', 'detail_info') do
-      detail_info = true
+      options[:detail_info] = true
+    end
+
+    opts.on('-a', 'Include hidden files') do
+      options[:include_hidden_files] = true
+    end
+
+    opts.on('-r', 'invert_order') do
+      options[:invert_order] = true
     end
   end.parse!
 
-  detail_info
+  options
 end
 
-def fetch_files
-  Dir.glob('*')
+def fetch_files(options)
+  files = if options[:include_hidden_files]
+            Dir.glob('*', File::FNM_DOTMATCH)
+          else
+            Dir.glob('*')
+          end
+
+  if options[:invert_order]
+    files.reverse!
+  else
+    files
+  end
 end
 
 def sort_files(files)
@@ -108,23 +126,33 @@ def format_perms(mode, shift)
   perms
 end
 
+def calculate_max_length(files)
+  max_length = { file_length: 0, size_length: 0, group_length: 0, owner_length: 0, nlink_length: 0 }
+  max_length[:filename_length] = files.max_by(&:length).length
+  max_length[:size_length] = files.map { |file| File.size(file).to_s.length }.max
+  max_length[:group_length] = files.map { |file| Etc.getgrgid(File.stat(file).gid).name.length }.max
+  max_length[:owner_length] = files.map { |file| Etc.getpwuid(File.stat(file).uid).name.length }.max
+  max_length[:nlink_length] = files.map { |file| File.stat(file).nlink.to_s.length }.max
+
+  max_length
+end
+
 def fetch_display_files_detail(files)
-  max_filename_length = files.max_by(&:length).length
-  max_size_length = files.map { |file| File.size(file).to_s.length }.max
-  max_group_length = files.map { |file| Etc.getgrgid(File.stat(file).gid).name.length }.max
-  max_owner_length = files.map { |file| Etc.getpwuid(File.stat(file).uid).name.length }.max
-  max_nlink_length = files.map { |file| File.stat(file).nlink.to_s.length }.max
+  max_length = calculate_max_length(files)
 
   files.each do |file|
     file_set = []
     file_stat = File.stat(file)
 
-    file_set.unshift(format("%-#{max_filename_length}s", file))
-    file_set.unshift(format('%<month>2d月 %<day>2d %<time>2s', month: File.mtime(file).month, day: File.mtime(file).day, time: File.mtime(file).strftime('%H:%M')))
-    file_set.unshift(format("%#{max_size_length}s", File.size(file)))
-    file_set.unshift(format("%-#{max_group_length}s", Etc.getgrgid(file_stat.gid).name))
-    file_set.unshift(format("%-#{max_owner_length}s", Etc.getpwuid(file_stat.uid).name))
-    file_set.unshift(format("%-#{max_nlink_length}s", file_stat.nlink))
+    file_set.unshift(format("%-#{max_length[:filename_length]}s", file))
+    file_set.unshift(format('%<month>2d月 %<day>2d %<time>2s',
+                            month: File.mtime(file).month,
+                            day: File.mtime(file).day,
+                            time: File.mtime(file).strftime('%H:%M')))
+    file_set.unshift(format("%#{max_length[:size_length]}s", File.size(file)))
+    file_set.unshift(format("%-#{max_length[:group_length]}s", Etc.getgrgid(file_stat.gid).name))
+    file_set.unshift(format("%-#{max_length[:owner_length]}s", Etc.getpwuid(file_stat.uid).name))
+    file_set.unshift(format("%-#{max_length[:nlink_length]}s", file_stat.nlink))
     file_set.unshift(f_type_to_s(file_stat.mode) + f_perms_to_s(file_stat.mode))
     file_set_str = file_set.join(' ')
     puts file_set_str
@@ -132,11 +160,12 @@ def fetch_display_files_detail(files)
 end
 
 def execute_ls
-  if determine_option
+  options = determine_option
+  if options[:detail_info]
     puts "合計 #{calculate_total_blocks(Dir.pwd) / 2}"
-    fetch_display_files_detail(fetch_files)
+    fetch_display_files_detail(fetch_files(options))
   else
-    display_files(sort_files(fetch_files))
+    display_files(sort_files(fetch_files(options)))
   end
 end
 
