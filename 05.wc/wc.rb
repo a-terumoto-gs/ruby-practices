@@ -132,7 +132,7 @@ def input_pipe(file, options)
   puts file_set.join(' ')
 end
 
-def excuse_wc
+def execute_wc
   options = determine_options
   if ARGV.empty?
     input_pipe($stdin.read, options)
@@ -141,4 +141,4 @@ def excuse_wc
   end
 end
 
-excuse_wc
+execute_wc
