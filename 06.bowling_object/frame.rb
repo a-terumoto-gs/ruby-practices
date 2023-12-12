@@ -19,4 +19,23 @@ class Frame
   def spare?
     score == 10 && !strike?
   end
+
+  def self.allocation_play_result(play_result)
+    play_result_split = play_result.split(',')
+    frames = []
+    index = 0
+    while index < play_result.length
+      shot = play_result_split[index]
+      if Shot.new(shot).strike_mark?
+        frames << Frame.new(shot, '0')
+        index += 1
+      else
+        next_shot = play_result_split[index + 1] || '0'
+        frames << Frame.new(shot, next_shot)
+        index += 2
+      end
+    end
+    
+    frames
+  end
 end

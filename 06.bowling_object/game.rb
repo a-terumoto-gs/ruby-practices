@@ -4,22 +4,8 @@ require_relative 'frame'
 require_relative 'shot'
 
 class Game
-  def initialize(game_shot)
-    game_shots = game_shot.split(',')
-
-    @frames = []
-    index = 0
-    while index < game_shots.length
-      shot = game_shots[index]
-      if shot == 'X'
-        @frames << Frame.new('X', '0')
-        index += 1
-      else
-        next_shot = game_shots[index + 1] || '0'
-        @frames << Frame.new(shot, next_shot)
-        index += 2
-      end
-    end
+  def initialize(play_result)
+    @frames = Frame.allocation_play_result(play_result)
   end
 
   def score
@@ -54,5 +40,5 @@ class Game
   end
 end
 
-game = Game.new(ARGV[0])
-puts game.score
+play_result = Game.new(ARGV[0])
+puts play_result.score
