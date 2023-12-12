@@ -21,21 +21,13 @@ class Frame
   end
 
   def self.allocation_play_result(play_result)
-    play_result_split = play_result.split(',')
+    play_result_split = play_result.gsub(/X,/, 'X,0,').split(',')
     frames = []
-    index = 0
-    while index < play_result.length
+    (0...play_result_split.length).step(2) do |index|
       shot = play_result_split[index]
-      if Shot.new(shot).strike_mark?
-        frames << Frame.new(shot, '0')
-        index += 1
-      else
-        next_shot = play_result_split[index + 1] || '0'
-        frames << Frame.new(shot, next_shot)
-        index += 2
-      end
+      next_shot = play_result_split[index + 1]
+      frames << Frame.new(shot, next_shot)
     end
-    
     frames
   end
 end
