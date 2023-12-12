@@ -6,10 +6,10 @@ class Shot
   end
 
   def strike_mark?
-    mark == 'X'
+    @mark == 'X'
   end
 
   def score
-    strike_mark? ? 10 : mark.to_i
+    strike_mark? ? 10 : @mark.to_i
   end
 end
