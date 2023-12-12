@@ -5,7 +5,7 @@ require_relative 'shot'
 
 class Game
   def initialize(play_result)
-    @frames = Frame.allocation_play_result(play_result)
+    @frames = Frame.generate_frames(play_result)
   end
 
   def score
