@@ -40,5 +40,5 @@ class Game
   end
 end
 
-play_result = Game.new(ARGV[0])
-puts play_result.score
+game = Game.new(ARGV[0])
+puts game.score

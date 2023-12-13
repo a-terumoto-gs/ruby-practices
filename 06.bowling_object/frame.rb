@@ -20,12 +20,12 @@ class Frame
     score == 10 && !strike?
   end
 
-  def self.generate_frames(play_result)
-    play_result_split = play_result.gsub(/X,/, 'X,0,').split(',')
+  def self.generate_frames(game)
+    game_split = game.gsub(/X,/, 'X,0,').split(',')
     frames = []
-    (0...play_result_split.length).step(2).each do |index|
-      shot = play_result_split[index]
-      next_shot = play_result_split[index + 1]
+    (0...game_split.length).step(2).each do |index|
+      shot = game_split[index]
+      next_shot = game_split[index + 1]
       frames << Frame.new(shot, next_shot)
     end
     frames
