@@ -4,8 +4,8 @@ require_relative 'frame'
 require_relative 'shot'
 
 class Game
-  def initialize(play_result)
-    @frames = Frame.generate_frames(play_result)
+  def initialize(game)
+    @frames = Frame.generate_frames(game)
   end
 
   def score
@@ -15,7 +15,6 @@ class Game
 
       next_frame = @frames[index + 1]
       after_next_frame = @frames[index + 2]
-
       if current_frame.strike?
         game_score += strike_bonus(next_frame, after_next_frame)
       elsif current_frame.spare?
@@ -29,9 +28,9 @@ class Game
 
   def strike_bonus(next_frame, after_next_frame)
     if next_frame.strike?
-      10 + after_next_frame.first_shot.score
+      10 + next_frame.second_shot.score.to_i + after_next_frame&.first_shot&.score.to_i
     else
-      next_frame.score
+      next_frame.first_shot.score + next_frame.second_shot.score
     end
   end
 

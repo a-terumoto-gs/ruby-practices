@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
 class Frame
-  attr_reader :first_shot, :second_shot
+  attr_reader :first_shot, :second_shot, :third_shot
 
-  def initialize(first_mark, second_mark)
+  def initialize(first_mark, second_mark, third_mark = nil)
     @first_shot = Shot.new(first_mark)
     @second_shot = Shot.new(second_mark)
+    @third_shot = Shot.new(third_mark)
   end
 
   def score
-    @first_shot.score + @second_shot.score
+    @first_shot.score + @second_shot.score + @third_shot.score
   end
 
   def strike?
@@ -21,12 +22,30 @@ class Frame
   end
 
   def self.generate_frames(game)
-    game_split = game.gsub(/X,/, 'X,0,').split(',')
+    game_split = []
+    game.split(',').each do |mark|
+      if game_split.length < 18
+        if Shot.new(mark).strike_mark?
+          game_split << 'X' << '0'
+        else
+          game_split << mark
+        end
+      else
+        game_split << mark
+      end
+    end
+
     frames = []
-    (0...game_split.length).step(2).each do |index|
+    (0...18).step(2).each do |index|
       shot = game_split[index]
       next_shot = game_split[index + 1]
       frames << Frame.new(shot, next_shot)
+    end
+    
+    if game_split.length == 20
+      frames << Frame.new(game_split[-2], game_split[-1])
+    else
+      frames << Frame.new(game_split[-3], game_split[-2], game_split[-1])
     end
     frames
   end
