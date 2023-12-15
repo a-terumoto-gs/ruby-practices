@@ -4,8 +4,8 @@ require_relative 'frame'
 require_relative 'shot'
 
 class Game
-  def initialize(game)
-    @frames = Frame.generate_frames(game)
+  def initialize(marks)
+    @frames = Frame.generate_frames(marks)
   end
 
   def score

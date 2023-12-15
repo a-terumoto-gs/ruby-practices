@@ -21,36 +21,36 @@ class Frame
     score == 10 && !strike?
   end
 
-  def self.game_result_adjustment(game)
-    game_split = []
-    game.split(',').each do |mark|
-      if game_split.length < 18
+  def self.marks_adjustment(marks)
+    splitted_marks = []
+    marks.split(',').each do |mark|
+      if splitted_marks.length < 18
         if Shot.new(mark).strike_mark?
-          game_split << 'X' << '0'
+          splitted_marks << 'X' << '0'
         else
-          game_split << mark
+          splitted_marks << mark
         end
       else
-        game_split << mark
+        splitted_marks << mark
       end
     end
-    game_split
+    splitted_marks
   end
 
-  def self.generate_frames(game)
-    game_split = game_result_adjustment(game)
+  def self.generate_frames(marks)
+    splitted_marks = marks_adjustment(marks)
 
     frames = []
     (0...18).step(2).each do |index|
-      shot = game_split[index]
-      next_shot = game_split[index + 1]
-      frames << Frame.new(shot, next_shot)
+      mark = splitted_marks[index]
+      next_mark = splitted_marks[index + 1]
+      frames << Frame.new(mark, next_mark)
     end
 
-    frames << if game_split.length == 20
-                Frame.new(game_split[-2], game_split[-1])
+    frames << if splitted_marks.length == 20
+                Frame.new(splitted_marks[-2], splitted_marks[-1])
               else
-                Frame.new(game_split[-3], game_split[-2], game_split[-1])
+                Frame.new(splitted_marks[-3], splitted_marks[-2], splitted_marks[-1])
               end
   end
 end
