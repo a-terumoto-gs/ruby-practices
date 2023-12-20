@@ -25,6 +25,7 @@ class Frame
     splitted_marks = []
     marks.split(',').each do |mark|
       if splitted_marks.length < 18
+        shot = Shot.new(mark)
         if Shot.new(mark).strike_mark?
           splitted_marks << 'X' << '0'
         else
