@@ -22,36 +22,37 @@ class Frame
   end
 
   def self.marks_adjustment(marks)
-    splitted_marks = []
-    marks.split(',').each do |mark|
-      if splitted_marks.length < 18
-        shot = Shot.new(mark)
-        if Shot.new(mark).strike_mark?
-          splitted_marks << 'X' << '0'
+    shots = marks.split(',')
+    splitted_shots = []
+    shots.each do |shot|
+      if splitted_shots.length < 18
+        current_shot = Shot.new(shot)
+        if current_shot.strike_mark?
+          splitted_shots << 'X' << '0'
         else
-          splitted_marks << mark
+          splitted_shots << shot
         end
       else
-        splitted_marks << mark
+        splitted_shots << shot
       end
     end
-    splitted_marks
+    splitted_shots
   end
 
   def self.generate_frames(marks)
-    splitted_marks = marks_adjustment(marks)
+    splitted_shots = marks_adjustment(marks)
 
     frames = []
     (0...18).step(2).each do |index|
-      mark = splitted_marks[index]
-      next_mark = splitted_marks[index + 1]
-      frames << Frame.new(mark, next_mark)
+      shot = splitted_shots[index]
+      next_shot = splitted_shots[index + 1]
+      frames << Frame.new(shot, next_shot)
     end
 
-    frames << if splitted_marks.length == 20
-                Frame.new(splitted_marks[-2], splitted_marks[-1])
+    frames << if splitted_shots.length == 20
+                Frame.new(splitted_shots[-2], splitted_shots[-1])
               else
-                Frame.new(splitted_marks[-3], splitted_marks[-2], splitted_marks[-1])
+                Frame.new(splitted_shots[-3], splitted_shots[-2], splitted_shots[-1])
               end
   end
 end
