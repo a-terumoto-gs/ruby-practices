@@ -22,18 +22,17 @@ class Frame
   end
 
   def self.marks_adjustment(marks)
-    shots = marks.split(',')
+    shots = marks.split(',').map { |mark| Shot.new(mark) }
     splitted_shots = []
-    shots.each do |shot|
+    shots.each do |current_shot|
       if splitted_shots.length < 18
-        current_shot = Shot.new(shot)
         if current_shot.strike_mark?
-          splitted_shots << 'X' << '0'
+          splitted_shots.concat([Shot.new('X'), Shot.new('0')])
         else
-          splitted_shots << shot
+          splitted_shots << current_shot
         end
       else
-        splitted_shots << shot
+        splitted_shots << current_shot
       end
     end
     splitted_shots
