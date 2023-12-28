@@ -18,6 +18,12 @@ class Shot
   end
 
   def score
-    strike_shot? ? 10 : (@shot.nil? ? 0 : @shot&.shot.to_i)
+    if strike_shot?
+      10
+    elsif @shot.nil?
+      0
+    else
+      @shot.shot.to_i
+    end
   end
 end
