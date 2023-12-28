@@ -12,7 +12,6 @@ class Game
     game_score = @frames.map(&:score).sum
     @frames.each_with_index do |current_frame, index|
       break if index >= 9
-
       next_frame = @frames[index + 1]
       after_next_frame = @frames[index + 2]
       if current_frame.strike?
