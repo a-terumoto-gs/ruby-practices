@@ -21,7 +21,7 @@ class Frame
     score == 10 && !strike?
   end
 
-  def self.marks_adjustment(marks)
+  def self.convert_to_splitted_shots(marks)
     shots = marks.split(',').map { |mark| Shot.new(mark) }
     splitted_shots = []
     shots.each do |shot|
@@ -35,16 +35,13 @@ class Frame
         splitted_shots << shot
       end
     end
-    splitted_shots
   end
 
-  def self.generate_frames(marks)
-    splitted_shots = marks_adjustment(marks)
-
+  def self.generate_frames
+    splitted_shots = convert_to_splitted_shots(marks)
     frames = []
-    (0...18).step(2).each do |index|
-      shot = splitted_shots[index]
-      next_shot = splitted_shots[index + 1]
+
+    splitted_shots[0, 18].each_slice(2) do |shot, next_shot|
       frames << Frame.new(shot, next_shot)
     end
 
@@ -53,5 +50,6 @@ class Frame
               else
                 Frame.new(splitted_shots[-3], splitted_shots[-2], splitted_shots[-1])
               end
+    frames
   end
 end
