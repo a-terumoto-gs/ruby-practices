@@ -21,7 +21,7 @@ class Frame
     score == 10 && !strike?
   end
 
-  def self.convert_to_splitted_shots(marks)
+  def self.convert_to_shots(marks)
     shots = marks.split(',').map { |mark| Shot.new(mark) }
     splitted_shots = []
     shots.each do |shot|
