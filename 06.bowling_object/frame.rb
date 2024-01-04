@@ -35,12 +35,13 @@ class Frame
         splitted_shots << shot
       end
     end
+    splitted_shots
   end
 
-  def self.generate_frames
-    splitted_shots = convert_to_splitted_shots(marks)
+  def self.generate_frames(marks)
+    splitted_shots = convert_to_shots(marks)
     frames = []
-
+    
     splitted_shots[0, 18].each_slice(2).map do |shot, next_shot|
       frames << Frame.new(shot, next_shot)
     end
