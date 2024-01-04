@@ -41,7 +41,7 @@ class Frame
     splitted_shots = convert_to_splitted_shots(marks)
     frames = []
 
-    splitted_shots[0, 18].each_slice(2) do |shot, next_shot|
+    splitted_shots[0, 18].each_slice(2).map do |shot, next_shot|
       frames << Frame.new(shot, next_shot)
     end
 
