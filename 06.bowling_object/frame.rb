@@ -27,18 +27,18 @@ class Frame
 
     9.times do
       shot = shots.shift
-        if shot.strike_shot?
-          frames << Frame.new(shot, Shot.new('0'))
-        else
-          next_shot = shots.shift
-          frames << Frame.new(shot, next_shot)
-        end
-      end
-
-      if shots.length == 2
-        frames << Frame.new(shots[-2], shots[-1])
+      if shot.strike_shot?
+        frames << Frame.new(shot, Shot.new('0'))
       else
-        frames << Frame.new(shots[-3], shots[-2], shots[-1])
+        next_shot = shots.shift
+        frames << Frame.new(shot, next_shot)
       end
+    end
+
+    frames << if shots.length == 2
+                Frame.new(shots[-2], shots[-1])
+              else
+                Frame.new(shots[-3], shots[-2], shots[-1])
+              end
   end
 end
