@@ -28,7 +28,7 @@ class Game
 
   def strike_bonus(next_frame, after_next_frame)
     if next_frame.strike?
-      10 + next_frame.second_shot.score.to_i + after_next_frame&.first_shot&.score.to_i
+      10 + next_frame.second_shot.score + after_next_frame&.first_shot&.score.to_i
     else
       next_frame.first_shot.score + next_frame.second_shot.score
     end
