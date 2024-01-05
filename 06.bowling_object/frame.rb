@@ -34,11 +34,6 @@ class Frame
         frames << Frame.new(shot, next_shot)
       end
     end
-
-    frames << if shots.length == 2
-                Frame.new(shots[-2], shots[-1])
-              else
-                Frame.new(shots[-3], shots[-2], shots[-1])
-              end
+    frames << Frame.new(*shots)
   end
 end
