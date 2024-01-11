@@ -2,7 +2,6 @@
 
 require 'etc'
 require 'time'
-require_relative 'file_info'
 
 class FileInfo
   def fetch_files(options)
