@@ -2,13 +2,13 @@
 # frozen_string_literal: true
 
 require 'optparse'
-require_relative 'l_option_handler'
-require_relative 'default_option_handler'
+require_relative 'display'
+require_relative 'file_info'
 
 class LsExecutor
   def initialize
-    @loptionhandler = LOptionHandler.new
-    @defaultoptionhandler= DefaultOptionHandler.new
+    @display = Display.new
+    @file_info = FileInfo.new
   end
 
   def determine_option
@@ -31,30 +31,15 @@ class LsExecutor
     options
   end
 
-  def fetch_files(options)
-    files = if options[:include_hidden_files]
-              Dir.glob('*', File::FNM_DOTMATCH)
-            else
-              Dir.glob('*')
-            end
-
-    if options[:invert_order]
-      files.reverse!
-    else
-      files
-    end
-  end
-
   def execute_ls
     options = determine_option
     if options[:detail_info]
-      puts "合計 #{@loptionhandler.calculate_total_blocks(Dir.pwd) / 2}"
-      @loptionhandler.fetch_display_files_detail(fetch_files(options))
+      puts "合計 #{@file_info.calculate_total_blocks(Dir.pwd) / 2}"
+      @display.display_files_detail(@file_info.fetch_files(options))
     else
-      @defaultoptionhandler.display_files(@defaultoptionhandler.sort_files(fetch_files(options)))
+      @display.display_files(@display.sort_files(@file_info.fetch_files(options)))
     end
   end
-
 end
 
 ls_execution = LsExecutor.new
