@@ -12,8 +12,8 @@ class Display
 
   def sort_display_files(files)
     columns_count = 3
-    max_length = @files.map(&:length).max
-    format_files = @files.map { |file| file.ljust(max_length + 2) }
+    max_length = files.map(&:length).max
+    format_files = files.map { |file| file.ljust(max_length + 2) }
     format_files << nil while format_files.length % columns_count != 0
 
     rows = format_files.each_slice(format_files.length / columns_count).to_a
@@ -23,9 +23,9 @@ class Display
   end
 
   def display_files_detail(files)
-    max_length = @info_acquisition.calculate_max_length(@files)
+    max_length = @info_acquisition.calculate_max_length(files)
 
-    @files.each do |file|
+    files.each do |file|
       file_set = []
       file_stat = File.stat(file)
 
@@ -56,4 +56,3 @@ end
 
 display = Display.new
 display.execute_ls
-

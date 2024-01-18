@@ -26,16 +26,16 @@ class InfoAcquisition
   end
 
   def fetch_files(options)
-    @files = if options[:include_hidden_files]
+    files = if options[:include_hidden_files]
               Dir.glob('*', File::FNM_DOTMATCH)
             else
               Dir.glob('*')
             end
 
     if options[:invert_order]
-      @files.reverse!
+      files.reverse!
     else
-      @files
+      files
     end
   end
 
@@ -96,13 +96,12 @@ class InfoAcquisition
 
   def calculate_max_length(files)
     max_length = { filename_length: 0, size_length: 0, group_length: 0, owner_length: 0, nlink_length: 0 }
-    max_length[:filename_length] = @files.max_by(&:length).length
-    max_length[:size_length] = @files.map { |file| File.size(file).to_s.length }.max
-    max_length[:group_length] = @files.map { |file| Etc.getgrgid(File.stat(file).gid).name.length }.max
-    max_length[:owner_length] = @files.map { |file| Etc.getpwuid(File.stat(file).uid).name.length }.max
-    max_length[:nlink_length] = @files.map { |file| File.stat(file).nlink.to_s.length }.max
+    max_length[:filename_length] = files.max_by(&:length).length
+    max_length[:size_length] = files.map { |file| File.size(file).to_s.length }.max
+    max_length[:group_length] = files.map { |file| Etc.getgrgid(File.stat(file).gid).name.length }.max
+    max_length[:owner_length] = files.map { |file| Etc.getpwuid(File.stat(file).uid).name.length }.max
+    max_length[:nlink_length] = files.map { |file| File.stat(file).nlink.to_s.length }.max
 
     max_length
   end
 end
-
