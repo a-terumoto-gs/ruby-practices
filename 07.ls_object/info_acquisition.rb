@@ -5,6 +5,13 @@ require 'etc'
 require 'time'
 
 class InfoAcquisition
+  attr_reader :options, :files
+
+  def initialize
+    @options = determine_option
+    @files = fetch_files(@options)
+  end
+
   def determine_option
     options = { detail_info: false, include_hidden_files: false, invert_order: false }
 

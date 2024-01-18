@@ -6,8 +6,8 @@ require_relative 'info_acquisition'
 class Display
   def initialize
     @info_acquisition = InfoAcquisition.new
-    @options = @info_acquisition.determine_option
-    @files = @info_acquisition.fetch_files(@options)
+    @options = @info_acquisition.options
+    @files = @info_acquisition.files
   end
 
   def sort_display_files(files)
