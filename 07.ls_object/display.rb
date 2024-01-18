@@ -1,45 +1,31 @@
+#!/usr/bin/env ruby
 # frozen_string_literal: true
+
+require_relative 'info_acquisition'
 
 class Display
   def initialize
-    @file_info = FileInfo.new
+    @info_acquisition = InfoAcquisition.new
+    @options = @info_acquisition.determine_option
+    @files = @info_acquisition.fetch_files(@options)
   end
 
-  def sort_files(files)
-    elements_count = files.count
-    columns_count = (elements_count % 3).zero? ? elements_count / 3 : elements_count / 3 + 1
+  def sort_display_files(files)
+    columns_count = 3
+    max_length = @files.map(&:length).max
+    format_files = @files.map { |file| file.ljust(max_length + 2) }
+    format_files << nil while format_files.length % columns_count != 0
 
-    col1 = files.take(columns_count)
-    case elements_count % 3
-    when 1
-      col2 = files.slice(columns_count, columns_count - 1)
-      col3 = files.last(columns_count - 1)
-    when 2
-      col2 = files.slice(columns_count, columns_count)
-      col3 = files.last(columns_count - 1)
-    else
-      col2 = files.slice(columns_count, columns_count)
-      col3 = files.last(columns_count)
-    end
-
-    col2.push(' ') if elements_count % 3 == 1
-    col3.push(' ') if elements_count % 3 == 1 || elements_count % 3 == 2
-
-    [col1, col2, col3]
-  end
-
-  def display_files(files)
-    max_length = files.flatten.map(&:length).max
-
-    files.transpose.each do |index|
-      puts index.map { |e| e.ljust(max_length) }.join(' ')
+    rows = format_files.each_slice(format_files.length / columns_count).to_a
+    rows.transpose.each do |row|
+      puts row.join
     end
   end
 
   def display_files_detail(files)
-    max_length = @file_info.calculate_max_length(files)
+    max_length = @info_acquisition.calculate_max_length(@files)
 
-    files.each do |file|
+    @files.each do |file|
       file_set = []
       file_stat = File.stat(file)
 
@@ -52,9 +38,22 @@ class Display
       file_set.unshift(format("%-#{max_length[:group_length]}s", Etc.getgrgid(file_stat.gid).name))
       file_set.unshift(format("%-#{max_length[:owner_length]}s", Etc.getpwuid(file_stat.uid).name))
       file_set.unshift(format("%-#{max_length[:nlink_length]}s", file_stat.nlink))
-      file_set.unshift(@file_info.f_type_to_s(file_stat.mode) + @file_info.f_perms_to_s(file_stat.mode))
+      file_set.unshift(@info_acquisition.f_type_to_s(file_stat.mode) + @info_acquisition.f_perms_to_s(file_stat.mode))
       file_set_str = file_set.join(' ')
       puts file_set_str
     end
   end
+
+  def execute_ls
+    if @options[:detail_info]
+      puts "合計 #{@info_acquisition.calculate_total_blocks(Dir.pwd) / 2}"
+      display_files_detail(@files)
+    else
+      sort_display_files(@files)
+    end
+  end
 end
+
+display = Display.new
+display.execute_ls
+
