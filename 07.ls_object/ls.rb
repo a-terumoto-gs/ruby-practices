@@ -10,16 +10,16 @@ class Ls
     @essential_info = EssentialInfo.new
     @options = @essential_info.options
 
-    if @options[:detail_info]
-      @display = LongDisplay.new(@essential_info)
-    else
-      @display = ShortDisplay.new(@essential_info)
-    end
+    @display = if @options[:detail_info]
+                 LongDisplay.new(@essential_info)
+               else
+                 ShortDisplay.new(@essential_info)
+               end
   end
 
   def run_command
-      puts "合計 #{@display.calculate_total_blocks(Dir.pwd) / 2}" if @options[:detail_info]
-      @display.display_files(@essential_info.files) 
+    puts "合計 #{@display.calculate_total_blocks(Dir.pwd) / 2}" if @options[:detail_info]
+    @display.display_files
   end
 end
 

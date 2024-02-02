@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class LongDisplay
-  require_relative 'essential_info'
+  require 'etc'
+  require 'time'
 
   def initialize(essential_info)
     @essential_info = essential_info
@@ -11,11 +12,11 @@ class LongDisplay
     format("%-#{max_length[:filename_length]}s", file)
   end
 
-  def formatted_date(max_length, file_stat)
+  def formatted_date(file_stat)
     format('%<month>2d月 %<day>2d %<time>2s',
-            month: file_stat.mtime.month,
-            day: file_stat.mtime.day,
-            time: file_stat.mtime.strftime('%H:%M'))
+           month: file_stat.mtime.month,
+           day: file_stat.mtime.day,
+           time: file_stat.mtime.strftime('%H:%M'))
   end
 
   def formatted_size(max_length, file_stat)
@@ -33,7 +34,7 @@ class LongDisplay
   def formatted_nlink(max_length, file_stat)
     format("%-#{max_length[:nlink_length]}s", file_stat.nlink)
   end
-  
+
   def calculate_total_blocks(directory_path)
     total_blocks = 0
 
@@ -77,7 +78,6 @@ class LongDisplay
     owner_perms = format_perms(mode, 6)
     group_perms = format_perms(mode, 3)
     other_perms = format_perms(mode, 0)
-
     "#{owner_perms}#{group_perms}#{other_perms}"
   end
 
@@ -100,25 +100,23 @@ class LongDisplay
     max_length
   end
 
-  def display_files(files)
+  def display_files
+    files = @essential_info.files
     max_length = calculate_max_length(files)
 
     files.each do |file|
       file_stat = File.stat(file)
       file_info = LongDisplay.new(@essential_info)
-
       file_set = [
         f_type_to_s(file_stat.mode) + f_perms_to_s(file_stat.mode),
         file_info.formatted_nlink(max_length, file_stat),
         file_info.formatted_owner(max_length, file_stat),
         file_info.formatted_group(max_length, file_stat),
         file_info.formatted_size(max_length, file_stat),
-        file_info.formatted_date(max_length, file_stat),
+        file_info.formatted_date(file_stat),
         file_info.formatted_filename(max_length, file)
-      ]
-      file_set_str = file_set.join(' ')
-      puts file_set_str
+      ].join(' ')
+      puts file_set
     end
   end
 end
-

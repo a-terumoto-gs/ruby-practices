@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
 require 'optparse'
-require 'etc'
-require 'time'
 
 class EssentialInfo
   attr_reader :options, :files
 
   def initialize
     @options = determine_option
-    @files = fetch_files(@options)
+    @files = fetch_files
   end
 
   private
@@ -34,7 +32,7 @@ class EssentialInfo
     options
   end
 
-  def fetch_files(options)
+  def fetch_files
     files = if @options[:include_hidden_files]
               Dir.glob('*', File::FNM_DOTMATCH)
             else

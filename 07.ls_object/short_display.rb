@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-require_relative 'essential_info'
-
 class ShortDisplay
   def initialize(essential_info)
     @essential_info = essential_info
   end
 
-  def display_files(files)
+  def display_files
     files = @essential_info.files
     columns_count = 3
     max_length = files.map(&:length).max
