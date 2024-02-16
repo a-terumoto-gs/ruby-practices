@@ -39,10 +39,7 @@ class EssentialInfo
               Dir.glob('*')
             end
 
-    if @options[:invert_order]
-      files.reverse!
-    else
+      files.reverse! if @options[:invert_order]
       files
-    end
   end
 end
