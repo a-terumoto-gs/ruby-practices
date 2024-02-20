@@ -8,7 +8,7 @@ require_relative 'short_display'
 class Ls
   def initialize
     @essential_info = EssentialInfo.new
-    @files =  @essential_info.files
+    @files = @essential_info.files
     @options = @essential_info.options
 
     @display = if @options[:detail_info]
