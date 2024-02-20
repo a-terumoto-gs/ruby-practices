@@ -6,6 +6,7 @@ class FileInfo
   def initialize(file)
     @file = file
     @file_stat = File.stat(file)
+    @mode = @file_stat.mode
   end
 
   def formatted_filename(max_length)
@@ -35,8 +36,8 @@ class FileInfo
     format("%-#{max_length[:nlink_length]}s", @file_stat.nlink)
   end
 
-  def f_type_to_s(mode)
-    case mode & 0o170000
+  def f_type_to_s
+    case @mode & 0o170000
     when 0o100000
       '-'
     when 0o040000
@@ -56,18 +57,20 @@ class FileInfo
     end
   end
 
-  def f_perms_to_s(mode)
-    owner_perms = format_perms(mode, 6)
-    group_perms = format_perms(mode, 3)
-    other_perms = format_perms(mode, 0)
+  def f_perms_to_s
+    owner_perms = format_perms(6)
+    group_perms = format_perms(3)
+    other_perms = format_perms(0)
     "#{owner_perms}#{group_perms}#{other_perms}"
   end
 
-  def format_perms(mode, shift)
+  private
+
+  def format_perms(shift)
     perms = +''
-    perms << (mode & (0o400 >> shift) != 0 ? 'r' : '-')
-    perms << (mode & (0o200 >> shift) != 0 ? 'w' : '-')
-    perms << (mode & (0o100 >> shift) != 0 ? 'x' : '-')
+    perms << (@mode & (0o400 >> shift) != 0 ? 'r' : '-')
+    perms << (@mode & (0o200 >> shift) != 0 ? 'w' : '-')
+    perms << (@mode & (0o100 >> shift) != 0 ? 'x' : '-')
     perms
   end
 end

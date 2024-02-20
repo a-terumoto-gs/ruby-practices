@@ -43,7 +43,7 @@ class LongDisplay
     @files.each do |file|
       file_info = FileInfo.new(file)
       file_set = [
-        file_info.f_type_to_s(File.stat(file).mode) + file_info.f_perms_to_s(File.stat(file).mode),
+        file_info.f_type_to_s + file_info.f_perms_to_s,
         file_info.formatted_nlink(max_length),
         file_info.formatted_owner(max_length),
         file_info.formatted_group(max_length),
