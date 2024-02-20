@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class ShortDisplay
-  def initialize(essential_info)
-    @files = essential_info.files
+  def initialize(files)
+    @files = files
   end
 
   def display_files

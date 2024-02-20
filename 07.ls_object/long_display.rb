@@ -4,8 +4,8 @@ require 'etc'
 require_relative 'file_info'
 
 class LongDisplay
-  def initialize(essential_info)
-    @files = essential_info.files
+  def initialize(files)
+    @files = files
   end
 
   def calculate_total_blocks(directory_path)
