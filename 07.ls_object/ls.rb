@@ -19,8 +19,7 @@ class Ls
   end
 
   def run_command
-    puts "合計 #{@display.calculate_total_blocks(Dir.pwd) / 2}" if @options[:detail_info]
-    @display.display_files
+    @display.sort_files
   end
 end
 

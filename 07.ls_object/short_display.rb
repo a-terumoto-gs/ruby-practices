@@ -5,7 +5,7 @@ class ShortDisplay
     @files = files
   end
 
-  def display_files
+  def sort_files
     columns_count = 3
     max_length = @files.map(&:length).max
     format_files = @files.map { |file| file.ljust(max_length + 2) }

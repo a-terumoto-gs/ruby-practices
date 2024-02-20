@@ -37,8 +37,9 @@ class LongDisplay
     max_length
   end
 
-  def display_files
+  def sort_files
     max_length = calculate_max_length
+    puts "合計 #{calculate_total_blocks(Dir.pwd) / 2}"
 
     @files.each do |file|
       file_info = FileInfo.new(file)
