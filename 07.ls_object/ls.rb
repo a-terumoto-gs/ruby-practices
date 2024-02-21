@@ -19,7 +19,7 @@ class Ls
   end
 
   def run_command
-    @display.sort_files
+    puts @display.sort_files
   end
 end
 

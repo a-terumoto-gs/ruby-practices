@@ -12,8 +12,6 @@ class ShortDisplay
     format_files << nil while format_files.length % columns_count != 0
 
     rows = format_files.each_slice(format_files.length / columns_count).to_a
-    rows.transpose.each do |row|
-      puts row.join
-    end
+    rows.transpose.map(&:join).join("\n")
   end
 end
