@@ -39,9 +39,10 @@ class LongDisplay
 
   def sort_files
     max_length = calculate_max_length
-    puts "合計 #{calculate_total_blocks(Dir.pwd) / 2}"
-    file_sets = []
+    display_sets = []
+    display_sets << "合計 #{calculate_total_blocks(Dir.pwd) / 2}"
 
+    file_sets = []
     @files.each do |file|
       file_info = FileInfo.new(file)
       file_set = [
@@ -55,6 +56,6 @@ class LongDisplay
       ].join(' ')
       file_sets << file_set
     end
-    file_sets.join("\n")
+    display_sets << file_sets
   end
 end
